@@ -1,0 +1,924 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Web 前端技术 · 期末复习大纲</title>
+<style>
+  :root{
+    --primary:#2563eb;--primary-light:#eef2ff;
+    --accent:#10b981;--accent-light:#ecfdf5;
+    --warning:#f59e0b;--warning-light:#fef7e0;
+    --danger:#ef4444;--danger-light:#fee2e2;
+    --bg:#f0f4f9;--card:#fff;--text:#1f1f1f;
+    --text-muted:#444746;--text-light:#5f6368;
+    --border:#f0f4f9;--code-bg:#1e293b;--code-text:#e2e8f0;
+    --layout-max:1180px;--content-max:920px;--page-pad-x:24px;
+    --toc-w:240px;
+    --radius:14px;--radius-lg:16px;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html{scroll-behavior:smooth;scroll-padding-top:88px}
+  body{
+    font-family:"Google Sans","Product Sans",system-ui,-apple-system,"Segoe UI","PingFang SC","Microsoft YaHei",sans-serif;
+    background:linear-gradient(180deg,#f0f4f9 0%,#e8eef5 50%,#f0f4f9 100%);
+    background-attachment:fixed;color:var(--text);line-height:1.85;font-size:15px;
+    -webkit-font-smoothing:antialiased;min-height:100vh;
+  }
+  a{color:#1a73e8;text-decoration:none}
+  a:hover{text-decoration:underline}
+
+  /* 顶栏 */
+  .topbar{position:sticky;top:0;z-index:60;background:rgba(255,255,255,.92);backdrop-filter:blur(14px) saturate(140%);-webkit-backdrop-filter:blur(14px) saturate(140%);border-bottom:1px solid var(--border);box-shadow:0 1px 12px -8px rgba(0,0,0,.18);padding:11px 0}
+  .topbar-shell{max-width:var(--layout-max);margin:0 auto;padding:0 var(--page-pad-x)}
+  .topbar-inner{max-width:100%;margin:0;display:flex;align-items:center;gap:16px;flex-wrap:wrap}
+  .brand{font-size:17px;font-weight:800;padding-left:12px;border-left:4px solid var(--primary);line-height:1.25;flex-shrink:0}
+  .brand h1{font-size:17px;font-weight:800}
+  .brand .sub{display:block;font-size:12px;font-weight:500;color:var(--text-muted);margin-top:1px}
+  .topbar-spacer{flex:1;min-width:12px}
+  .topbar-nav{display:flex;align-items:center;gap:8px;flex-shrink:0}
+  .watermark{display:flex;align-items:center;gap:12px;flex-shrink:0;margin-right:28px}
+  .wm-line{height:1px;width:56px;flex:none;background:linear-gradient(90deg,transparent,#d2d2d2,transparent)}
+  .wm-text{font-family:Georgia,"Times New Roman",serif;font-style:italic;font-size:18px;font-weight:700;letter-spacing:1.5px;background:linear-gradient(90deg,#7c3aed,#2563eb,#10b981);-webkit-background-clip:text;background-clip:text;color:transparent;-webkit-text-fill-color:transparent;filter:drop-shadow(0 1px 6px rgba(37,99,235,.22));opacity:.82;white-space:nowrap}
+  .btn-ghost{background:#fff;color:#1f1f1f;border:1px solid #e8eaed;padding:8px 18px;border-radius:99px;cursor:pointer;font-size:13px;font-weight:500;transition:all .18s;text-decoration:none;display:inline-flex;align-items:center;gap:6px}
+  .btn-ghost:hover{border-color:#5a91f7;color:#5a91f7;background:#f8fbff;box-shadow:0 2px 8px rgba(90,145,247,.12);text-decoration:none}
+
+  /* 页面布局 + 目录 */
+  .page-shell{
+    max-width:var(--layout-max);margin:0 auto;
+    padding:28px var(--page-pad-x) 80px;
+    display:grid;grid-template-columns:var(--toc-w) minmax(0,1fr);
+    gap:28px;align-items:start;
+  }
+  .toc-panel{
+    position:sticky;top:82px;
+    background:#fff;border:1px solid var(--border);border-radius:24px;
+    box-shadow:0 4px 16px rgba(66,133,244,.06);
+    overflow:hidden;max-height:calc(100vh - 96px);
+    display:flex;flex-direction:column;
+  }
+  .toc-head{
+    padding:22px 20px 16px;border-bottom:1px solid var(--border);
+    display:flex;align-items:center;gap:12px;flex-shrink:0;
+  }
+  .toc-head .h-icon{
+    width:30px;height:30px;border-radius:50%;flex-shrink:0;
+    background:linear-gradient(135deg,#5a91f7 0%,#a98ad6 50%,#e88a94 100%);
+    display:flex;align-items:center;justify-content:center;
+    color:#fff;font-size:13px;
+    box-shadow:0 2px 8px rgba(155,114,203,.22);
+  }
+  .toc-head .h-title{font-size:15px;font-weight:500;color:var(--text);line-height:1.3}
+  .toc-head .h-sub{font-size:12px;color:var(--text-light);margin-top:2px}
+  .toc-list{
+    flex:1;overflow-y:auto;padding:10px 10px 6px;scrollbar-width:thin;
+  }
+  .toc-list::-webkit-scrollbar{width:4px}
+  .toc-list::-webkit-scrollbar-thumb{background:#e8eaed;border-radius:99px}
+  .toc-group{padding:8px 10px 4px;font-size:12px;font-weight:500;color:var(--text-light)}
+  .toc-group.focus{color:#7c3aed;font-weight:600}
+  .toc-list a{
+    display:block;padding:9px 14px;margin:1px 0;border-radius:12px;
+    font-size:13.5px;color:var(--text-muted);line-height:1.45;
+    text-decoration:none;transition:background .15s,color .15s;
+  }
+  .toc-list a:hover{background:#f8f9fa;color:var(--text);text-decoration:none}
+  .toc-list a.active{background:#eef2ff;color:#1a73e8;font-weight:500}
+  .toc-list a.focus-item{padding-left:22px;position:relative}
+  .toc-list a.focus-item::before{
+    content:"";position:absolute;left:12px;top:50%;transform:translateY(-50%);
+    width:4px;height:4px;border-radius:50%;background:#a98ad6;
+  }
+  .toc-list a.focus-item.active::before{background:#1a73e8}
+  .toc-foot{
+    flex-shrink:0;padding:10px 12px 14px;border-top:1px solid var(--border);
+  }
+  .toc-out{
+    display:block;padding:10px 14px;border-radius:12px;
+    border:1px solid #e8eaed;background:#fff;
+    font-size:13px;font-weight:500;color:#1a73e8;text-align:center;
+    text-decoration:none;transition:all .18s;
+  }
+  .toc-out:hover{
+    border-color:#5a91f7;background:#f8fbff;
+    box-shadow:0 2px 8px rgba(90,145,247,.1);text-decoration:none;
+  }
+  .main-content{min-width:0}
+  .main-inner{max-width:var(--content-max)}
+  .section-lead{
+    font-size:14px;color:var(--text-muted);line-height:1.75;
+    margin:-6px 0 20px;padding:12px 16px;
+    background:#fafbff;border-radius:12px;border-left:3px solid #d3e3fd;
+  }
+  .hero-extra{margin-top:14px;font-size:14px;opacity:.88;max-width:680px;line-height:1.75}
+
+  /* 卡片 */
+  .hero{background:linear-gradient(135deg,#5a91f7 0%,#a98ad6 50%,#e88a94 100%);border-radius:28px;padding:48px 44px 40px;color:#fff;margin-bottom:20px;box-shadow:0 8px 32px rgba(66,133,244,.22);position:relative;overflow:hidden}
+  .hero::before{content:"";position:absolute;top:-120px;right:-60px;width:320px;height:320px;background:radial-gradient(circle,rgba(255,255,255,.2) 0%,transparent 60%);pointer-events:none}
+  .hero>*{position:relative}
+  .hero-badge{display:inline-flex;align-items:center;gap:8px;font-size:13px;background:rgba(255,255,255,.18);border:1px solid rgba(255,255,255,.25);padding:7px 16px;border-radius:99px;margin-bottom:18px}
+  .hero h2{font-size:32px;font-weight:500;margin-bottom:12px;letter-spacing:-.5px;line-height:1.25}
+  .hero p{font-size:15px;opacity:.92;max-width:640px;line-height:1.75}
+  .focus-tags{display:flex;flex-wrap:wrap;gap:10px;margin-bottom:20px}
+  .focus-tag{background:#fff;border:1px solid var(--border);border-radius:99px;padding:8px 16px;font-size:13px;font-weight:500;box-shadow:0 2px 8px rgba(0,0,0,.04)}
+  .focus-tag b{color:#1a73e8;font-weight:600}
+
+  .section{background:#fff;border:1px solid var(--border);border-radius:24px;padding:32px 32px 28px;margin-bottom:20px;box-shadow:0 4px 16px rgba(66,133,244,.06)}
+  .section-head{display:flex;align-items:flex-start;gap:14px;margin-bottom:22px;padding-bottom:18px;border-bottom:1px solid var(--border)}
+  .section-num{flex-shrink:0;width:36px;height:36px;border-radius:12px;background:linear-gradient(135deg,#5a91f7,#a98ad6);color:#fff;font-size:14px;font-weight:700;display:flex;align-items:center;justify-content:center}
+  .section-num.focus{background:linear-gradient(135deg,#a98ad6,#e88a94)}
+  .section-head h2{font-size:22px;font-weight:500;line-height:1.35}
+  .section-head .sub{font-size:13px;color:var(--text-muted);margin-top:4px}
+
+  h3{font-size:17px;font-weight:600;margin:26px 0 12px;color:var(--text)}
+  h3:first-of-type{margin-top:0}
+  h4{font-size:15px;font-weight:600;margin:18px 0 8px;color:var(--text-muted)}
+  p,ul,ol{margin-bottom:14px}
+  ul,ol{padding-left:22px}
+  li{margin:5px 0}
+  li::marker{color:#5a91f7}
+
+  .tip,.warn,.ok-box{border-radius:14px;padding:14px 18px;margin:16px 0;font-size:14px;line-height:1.75;border-left:4px solid}
+  .tip{background:linear-gradient(135deg,#e8f0fe,#f3e8fd);border-color:#5a91f7}
+  .warn{background:var(--warning-light);border-color:var(--warning);color:#7a5200}
+  .ok-box{background:var(--accent-light);border-color:var(--accent);color:#0d652d}
+
+  pre.code{background:linear-gradient(135deg,#1e1b2e 0%,#2a2540 100%);color:var(--code-text);padding:18px 20px;border-radius:16px;overflow-x:auto;font-family:"SF Mono",Consolas,Monaco,monospace;font-size:13.5px;line-height:1.75;margin:14px 0 18px;white-space:pre;border:1px solid rgba(155,114,203,.15)}
+  code{font-family:"SF Mono",Consolas,Monaco,monospace;font-size:.92em;background:#eef2f7;padding:1px 6px;border-radius:6px;color:#1a73e8}
+  pre code{background:none;padding:0;color:inherit}
+
+  table.data{width:100%;border-collapse:collapse;font-size:14px;margin:14px 0 18px;border-radius:12px;overflow:hidden;border:1px solid #e8eaed}
+  table.data th{background:#f8f9fa;color:var(--text-muted);font-weight:600;text-align:left;padding:11px 14px;border-bottom:1px solid #e8eaed}
+  table.data td{padding:10px 14px;border-bottom:1px solid #f0f4f9;vertical-align:top}
+  table.data tr:last-child td{border-bottom:none}
+  table.data tr:hover td{background:#fafbff}
+
+  .compare{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin:14px 0}
+  .compare-item{background:#f8f9fa;border:1px solid #e8eaed;border-radius:14px;padding:14px 16px}
+  .compare-item .label{font-size:12px;font-weight:600;color:#a142f4;margin-bottom:8px}
+
+  .cheat-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:10px;margin:14px 0}
+  .cheat-item{background:#f8f9fa;border:1px solid #e8eaed;border-radius:12px;padding:12px 14px;font-size:13px}
+  .cheat-item strong{display:block;font-size:12px;color:var(--text-light);margin-bottom:4px;font-weight:600}
+
+  @media(max-width:960px){
+    .page-shell{grid-template-columns:1fr;padding-top:20px}
+    .toc-panel{position:relative;top:0;max-height:none;margin-bottom:4px}
+    .toc-list{display:flex;flex-wrap:wrap;gap:6px;padding:8px 12px 12px;overflow:visible}
+    .toc-group{width:100%;padding:6px 4px 2px}
+    .toc-list a{
+      flex:1 1 auto;min-width:calc(50% - 6px);margin:0;
+      padding:8px 12px;background:#f8f9fa;border:1px solid #eef2f7;
+    }
+    .toc-list a.focus-item{padding-left:12px}
+    .toc-list a.focus-item::before{display:none}
+    .toc-foot{display:none}
+    .compare{grid-template-columns:1fr}
+    .hero{padding:32px 24px}
+    .hero h2{font-size:26px}
+    .section{padding:24px 20px}
+    .wm-line{display:none}
+    .watermark{margin-right:0}
+  }
+  @media(max-width:640px){
+    :root{--page-pad-x:14px}
+    .page-shell{padding:20px var(--page-pad-x) 60px}
+    .toc-list a{min-width:100%}
+  }
+</style>
+</head>
+<body>
+
+<header class="topbar">
+  <div class="topbar-shell">
+    <div class="topbar-inner">
+      <div class="brand">
+        <h1>Web 前端技术 · 期末复习大纲</h1>
+        <span class="sub">郑州轻工业大学 · 移动软件 2025 级</span>
+      </div>
+      <div class="topbar-spacer"></div>
+      <div class="watermark">
+        <span class="wm-line"></span>
+        <span class="wm-text">Made by MoQix26</span>
+        <span class="wm-line"></span>
+      </div>
+      <nav class="topbar-nav">
+        <a class="btn-ghost" href="Web复习.html">题库练习</a>
+        <a class="btn-ghost" href="Web复习.html">编程题复习</a>
+      </nav>
+    </div>
+  </div>
+</header>
+
+<div class="page-shell">
+  <aside class="toc-panel">
+    <div class="toc-head">
+      <div class="h-icon">☰</div>
+      <div>
+        <div class="h-title">章节目录</div>
+        <div class="h-sub">滚动时自动定位</div>
+      </div>
+    </div>
+    <nav class="toc-list" id="toc">
+      <div class="toc-group">开始</div>
+      <a href="#intro">复习说明</a>
+      <div class="toc-group">HTML</div>
+      <a href="#html-base">HTML 基础</a>
+      <div class="toc-group focus">重点章节</div>
+      <a class="focus-item" href="#table">表格</a>
+      <a class="focus-item" href="#form">表单</a>
+      <a class="focus-item" href="#list">列表</a>
+      <a class="focus-item" href="#flex">Flex 布局</a>
+      <div class="toc-group">CSS</div>
+      <a href="#css-base">CSS 基础</a>
+      <a href="#css-select">选择器</a>
+      <a href="#css-box">盒模型</a>
+      <a href="#css-text">文字与背景</a>
+      <a href="#css-anim">动画与过渡</a>
+      <div class="toc-group">其他</div>
+      <a href="#js-base">JavaScript</a>
+      <a href="#exam">考前速记</a>
+    </nav>
+    <div class="toc-foot">
+      <a class="toc-out" href="Web复习.html">→ 题库练习</a>
+    </div>
+  </aside>
+
+  <div class="main-content">
+    <div class="main-inner">
+
+      <section class="hero" id="intro">
+        <div class="hero-badge">2025—2026 第二学期 · 期末复习</div>
+        <h2>Web 前端技术复习资料大纲</h2>
+        <p>以 <strong>HTML + CSS</strong> 为主，JavaScript 仅补充考试常见基础。重点强化<strong>表格、表单、列表、弹性布局</strong>四大块，配合老师模拟卷题型巩固。</p>
+        <p class="hero-extra">本页按章节整理了课堂要点与模拟卷高频考点。建议先通读左侧「重点章节」，再对照各章代码示例理解写法，最后用「考前速记」查漏补缺。需要动手练题时，可通过顶栏进入题库。</p>
+      </section>
+
+      <div class="focus-tags">
+        <span class="focus-tag"><b>表格</b> caption / colspan / rowspan</span>
+        <span class="focus-tag"><b>表单</b> input / label / required</span>
+        <span class="focus-tag"><b>列表</b> ul / ol / dl</span>
+        <span class="focus-tag"><b>Flex</b> justify / align / direction</span>
+      </div>
+
+      <!-- ========== HTML 基础 ========== -->
+      <article class="section" id="html-base">
+        <div class="section-head">
+          <div class="section-num">1</div>
+          <div>
+            <h2>HTML 基础结构</h2>
+            <p class="sub">文档骨架、常用标签、语义化入门</p>
+          </div>
+        </div>
+
+        <p class="section-lead">HTML 是网页的骨架：先弄清文档结构（DOCTYPE、head、body），再记常用标签的语义与写法。期末卷里常考「哪个标签做什么用」「块级还是行内」这类概念题，编程题则要求能写出完整页面框架。</p>
+
+        <h3>1.1 标准文档结构</h3>
+<pre class="code">&lt;!DOCTYPE html&gt;
+&lt;html lang="zh-CN"&gt;
+&lt;head&gt;
+  &lt;meta charset="UTF-8"&gt;
+  &lt;meta name="viewport" content="width=device-width, initial-scale=1.0"&gt;
+  &lt;title&gt;页面标题（显示在浏览器标签栏）&lt;/title&gt;
+  &lt;link rel="stylesheet" href="style.css"&gt;
+&lt;/head&gt;
+&lt;body&gt;
+  &lt;!-- 可见内容写在这里 --&gt;
+&lt;/body&gt;
+&lt;/html&gt;</pre>
+
+        <table class="data">
+          <tr><th>标签/声明</th><th>作用</th><th>易错点</th></tr>
+          <tr><td><code>&lt;!DOCTYPE html&gt;</code></td><td>声明 HTML5 文档类型，触发标准模式</td><td>不是 HTML 标签，无闭合标签</td></tr>
+          <tr><td><code>&lt;meta charset&gt;</code></td><td>声明字符编码，常用 UTF-8</td><td>应放在 <code>&lt;head&gt;</code> 靠前位置</td></tr>
+          <tr><td><code>&lt;title&gt;</code></td><td>浏览器标签页标题</td><td>与 <code>&lt;h1&gt;</code> 不同，h1 是正文标题</td></tr>
+          <tr><td><code>&lt;link rel="stylesheet"&gt;</code></td><td>引入外部 CSS</td><td>用 <code>href</code> 不是 <code>src</code></td></tr>
+        </table>
+
+        <h3>1.2 文本与行内标签</h3>
+        <table class="data">
+          <tr><th>标签</th><th>含义</th><th>块级/行内</th></tr>
+          <tr><td><code>h1~h6</code></td><td>标题，h1 最大</td><td>块级</td></tr>
+          <tr><td><code>p</code></td><td>段落</td><td>块级</td></tr>
+          <tr><td><code>br</code></td><td>换行（空元素）</td><td>行内/空元素，<strong>不是块级</strong></td></tr>
+          <tr><td><code>hr</code></td><td>水平分割线</td><td>块级；粗细用 <code>size</code> 或 CSS</td></tr>
+          <tr><td><code>b / strong</code></td><td>加粗（strong 语义更强）</td><td>行内</td></tr>
+          <tr><td><code>i / em</code></td><td>斜体（em 表强调）</td><td>行内</td></tr>
+          <tr><td><code>sup / sub</code></td><td>上标 / 下标</td><td>行内</td></tr>
+        </table>
+
+        <h3>1.3 链接、图片与媒体</h3>
+<pre class="code">&lt;a href="https://www.example.com" target="_blank"&gt;新窗口打开&lt;/a&gt;
+&lt;img src="images/pic.jpg" alt="描述文字" width="300"&gt;
+&lt;video controls&gt;
+  &lt;source src="video.mp4" type="video/mp4"&gt;
+&lt;/video&gt;</pre>
+        <ul>
+          <li><code>target="_blank"</code>：新窗口/新标签页打开链接</li>
+          <li><code>alt</code>：图片无法显示时的替代文字（必写，利于无障碍）</li>
+          <li><code>&lt;source&gt;</code>：为 audio/video 提供多种格式，解决浏览器兼容</li>
+        </ul>
+
+        <h3>1.4 字符实体</h3>
+        <div class="cheat-grid">
+          <div class="cheat-item"><strong>空格</strong>&amp;nbsp;</div>
+          <div class="cheat-item"><strong>小于号 &lt;</strong>&amp;lt;</div>
+          <div class="cheat-item"><strong>大于号 &gt;</strong>&amp;gt;</div>
+          <div class="cheat-item"><strong>引号 "</strong>&amp;quot;</div>
+          <div class="cheat-item"><strong>版权 ©</strong>&amp;copy;</div>
+          <div class="cheat-item"><strong>和号 &amp;</strong>&amp;amp;</div>
+        </div>
+
+        <h3>1.5 HTML5 语义化标签（了解）</h3>
+        <table class="data">
+          <tr><th>标签</th><th>用途</th></tr>
+          <tr><td><code>header</code></td><td>页眉/区块头部</td></tr>
+          <tr><td><code>nav</code></td><td>导航链接区域</td></tr>
+          <tr><td><code>article</code></td><td>独立完整内容（新闻、评论、日志）</td></tr>
+          <tr><td><code>section</code></td><td>文档中的主题分区</td></tr>
+          <tr><td><code>footer</code></td><td>页脚</td></tr>
+        </table>
+      </article>
+
+      <!-- ========== 表格 ========== -->
+      <article class="section" id="table">
+        <div class="section-head">
+          <div class="section-num focus">2</div>
+          <div>
+            <h2>HTML 表格 ★</h2>
+            <p class="sub">老师模拟卷重点：caption、rowspan、colspan</p>
+          </div>
+        </div>
+
+        <p class="section-lead">表格是填空题和编程题的高频考点。核心是 <code>tr / th / td</code> 的嵌套关系，以及 <code>rowspan</code>（跨行）、<code>colspan</code>（跨列）的数值含义。写表时先画草图再填标签，避免合并后行列对不齐。</p>
+
+        <h3>2.1 基本结构</h3>
+<pre class="code">&lt;table border="1" width="300px" cellspacing="0"&gt;
+  &lt;caption&gt;学生信息表&lt;/caption&gt;  &lt;!-- 表格标题 --&gt;
+  &lt;tr&gt;
+    &lt;th&gt;列标题&lt;/th&gt;
+    &lt;td&gt;单元格数据&lt;/td&gt;
+  &lt;/tr&gt;
+&lt;/table&gt;</pre>
+
+        <table class="data">
+          <tr><th>标签</th><th>说明</th></tr>
+          <tr><td><code>table</code></td><td>表格容器</td></tr>
+          <tr><td><code>caption</code></td><td>表格标题（显示在表格上方）</td></tr>
+          <tr><td><code>tr</code></td><td>表格行（table row）</td></tr>
+          <tr><td><code>th</code></td><td>表头单元格（加粗居中，语义为标题）</td></tr>
+          <tr><td><code>td</code></td><td>普通数据单元格</td></tr>
+          <tr><td><code>thead / tbody / tfoot</code></td><td>表头区 / 主体 / 表脚（语义分组，了解）</td></tr>
+        </table>
+
+        <h3>2.2 单元格合并 ★★★</h3>
+        <div class="compare">
+          <div class="compare-item">
+            <div class="label">rowspan — 跨行（纵向）</div>
+            <code>&lt;td rowspan="2"&gt;</code><br>
+            向下合并 2 行
+          </div>
+          <div class="compare-item">
+            <div class="label">colspan — 跨列（横向）</div>
+            <code>&lt;th colspan="3"&gt;</code><br>
+            向右合并 3 列
+          </div>
+        </div>
+
+        <div class="tip"><strong>记忆：</strong><code>row</code> = 行 → <code>rowspan</code> 跨行；<code>col</code> = 列 → <code>colspan</code> 跨列。考试常考「学号 rowspan=2 + 个人信息 colspan=3」结构。</div>
+
+        <h3>2.3 老师卷例题结构（学生信息表）</h3>
+<pre class="code">&lt;table border="1" width="300px" cellspacing="0"&gt;
+  &lt;caption&gt;学生信息表&lt;/caption&gt;
+  &lt;tr&gt;
+    &lt;th rowspan="2"&gt;学号&lt;/th&gt;
+    &lt;th colspan="3"&gt;个人信息&lt;/th&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+    &lt;th align="center"&gt;姓名&lt;/th&gt;
+    &lt;th align="center"&gt;性别&lt;/th&gt;
+    &lt;th align="center"&gt;年龄&lt;/th&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+    &lt;td&gt;007&lt;/td&gt;&lt;td&gt;李志玲&lt;/td&gt;&lt;td&gt;女&lt;/td&gt;&lt;td&gt;19&lt;/td&gt;
+  &lt;/tr&gt;
+&lt;/table&gt;</pre>
+
+        <h3>2.4 常用表格属性</h3>
+        <table class="data">
+          <tr><th>属性</th><th>作用</th></tr>
+          <tr><td><code>border</code></td><td>边框宽度（HTML 属性，建议用 CSS border 替代）</td></tr>
+          <tr><td><code>cellspacing</code></td><td>单元格之间的间距</td></tr>
+          <tr><td><code>cellpadding</code></td><td>单元格内边距</td></tr>
+          <tr><td><code>width</code></td><td>表格/单元格宽度</td></tr>
+          <tr><td><code>align</code></td><td>水平对齐：left / center / right</td></tr>
+        </table>
+      </article>
+
+      <!-- ========== 表单 ========== -->
+      <article class="section" id="form">
+        <div class="section-head">
+          <div class="section-num focus">3</div>
+          <div>
+            <h2>HTML 表单 ★</h2>
+            <p class="sub">老师模拟卷重点：注册页、input 类型、label、required</p>
+          </div>
+        </div>
+
+        <p class="section-lead">表单负责收集用户输入。考试常考注册页、登录页的 HTML 结构：哪些控件用 <code>input</code>、如何用 <code>label</code> 关联、<code>required</code> 表示必填。注意区分「表单元素」与普通标签（如 <code>img</code> 不是表单控件）。</p>
+
+        <h3>3.1 form 容器</h3>
+<pre class="code">&lt;form action="/submit" method="post"&gt;
+  &lt;!-- 表单控件 --&gt;
+  &lt;input type="submit" value="提交"&gt;
+&lt;/form&gt;</pre>
+        <table class="data">
+          <tr><th>属性</th><th>说明</th></tr>
+          <tr><td><code>action</code></td><td>提交目标 URL</td></tr>
+          <tr><td><code>method</code></td><td><code>get</code>（参数在 URL）或 <code>post</code>（在请求体）</td></tr>
+          <tr><td><code>enctype</code></td><td>上传文件时必须 <code>multipart/form-data</code></td></tr>
+        </table>
+
+        <h3>3.2 input 常用 type ★★</h3>
+        <table class="data">
+          <tr><th>type</th><th>用途</th><th>示例</th></tr>
+          <tr><td><code>text</code></td><td>单行文本</td><td>用户名</td></tr>
+          <tr><td><code>password</code></td><td>密码（掩码显示）</td><td>密码框</td></tr>
+          <tr><td><code>email</code></td><td>邮箱（带格式校验）</td><td>注册邮箱</td></tr>
+          <tr><td><code>radio</code></td><td>单选（同 name 为一组）</td><td>性别</td></tr>
+          <tr><td><code>checkbox</code></td><td>复选（可多选）</td><td>兴趣爱好</td></tr>
+          <tr><td><code>file</code></td><td>文件上传</td><td>头像</td></tr>
+          <tr><td><code>submit</code></td><td>提交按钮</td><td>登录/注册</td></tr>
+          <tr><td><code>reset</code></td><td>重置按钮</td><td>清空表单</td></tr>
+          <tr><td><code>button</code></td><td>普通按钮（配合 JS）</td><td>确定</td></tr>
+        </table>
+
+        <h3>3.3 重要表单属性</h3>
+        <table class="data">
+          <tr><th>属性</th><th>作用</th><th>考试频率</th></tr>
+          <tr><td><code>name</code></td><td>提交时的字段名</td><td>高</td></tr>
+          <tr><td><code>id</code></td><td>唯一标识，配合 label / JS</td><td>高</td></tr>
+          <tr><td><code>value</code></td><td>默认值/按钮文字</td><td>中</td></tr>
+          <tr><td><code>placeholder</code></td><td>输入框灰色提示文字</td><td>高</td></tr>
+          <tr><td><code>required</code></td><td>必填，不填无法提交</td><td>★ 常考</td></tr>
+          <tr><td><code>readonly</code></td><td>只读，可提交</td><td>中</td></tr>
+          <tr><td><code>disabled</code></td><td>禁用，不可提交</td><td>中</td></tr>
+          <tr><td><code>checked</code></td><td>默认选中 radio/checkbox</td><td>中</td></tr>
+          <tr><td><code>selected</code></td><td>option 默认选中</td><td>中</td></tr>
+        </table>
+
+        <h3>3.4 label 与控件关联</h3>
+<pre class="code">&lt;label for="uname"&gt;用户名：&lt;/label&gt;
+&lt;input type="text" id="uname" name="username"&gt;</pre>
+        <p><code>for</code> 的值必须等于 input 的 <code>id</code>，点击文字可聚焦输入框。</p>
+
+        <h3>3.5 其他表单元素</h3>
+        <table class="data">
+          <tr><th>标签</th><th>说明</th></tr>
+          <tr><td><code>textarea</code></td><td>多行文本，如自我介绍</td></tr>
+          <tr><td><code>select / option</code></td><td>下拉选择框</td></tr>
+          <tr><td><code>fieldset / legend</code></td><td>表单分组及分组标题（注册页常用）</td></tr>
+          <tr><td><code>button</code></td><td>按钮，<code>type="submit|reset|button"</code></td></tr>
+        </table>
+
+        <div class="warn"><strong>易错：</strong><code>&lt;img&gt;</code> 不是表单元素；<code>required</code> 是 HTML5 标准必填属性，不是 formvalidate / validate。</div>
+
+        <h3>3.6 注册页 CSS 常考点（配合编程/填空）</h3>
+        <ul>
+          <li>表单项标题右对齐：<code>label { text-align: right; }</code></li>
+          <li>输入框圆角：<code>border-radius: 3px;</code></li>
+          <li>焦点红色阴影：<code>input:focus { box-shadow: 0 0 6px red; }</code></li>
+        </ul>
+      </article>
+
+      <!-- ========== 列表 ========== -->
+      <article class="section" id="list">
+        <div class="section-head">
+          <div class="section-num focus">4</div>
+          <div>
+            <h2>HTML 列表 ★</h2>
+            <p class="sub">无序/有序/定义列表，导航与内容排版</p>
+          </div>
+        </div>
+
+        <p class="section-lead">列表用于导航菜单、步骤说明、术语解释等场景。三种列表不要混用：<code>ul</code> 无序号、<code>ol</code> 有序号、<code>dl</code> 是「术语 + 解释」的定义列表。导航栏通常用 <code>ul &gt; li &gt; a</code> 嵌套。</p>
+
+        <h3>4.1 无序列表 ul</h3>
+<pre class="code">&lt;ul&gt;
+  &lt;li&gt;HTML&lt;/li&gt;
+  &lt;li&gt;CSS&lt;/li&gt;
+  &lt;li&gt;JavaScript&lt;/li&gt;
+&lt;/ul&gt;</pre>
+        <p>默认显示圆点项目符号，常用于导航、并列条目。</p>
+
+        <h3>4.2 有序列表 ol</h3>
+<pre class="code">&lt;ol&gt;
+  &lt;li&gt;打开浏览器&lt;/li&gt;
+  &lt;li&gt;输入网址&lt;/li&gt;
+  &lt;li&gt;按回车访问&lt;/li&gt;
+&lt;/ol&gt;</pre>
+        <p>默认显示数字序号，用于有先后顺序的步骤（如「十大理由」）。</p>
+
+        <h3>4.3 定义列表 dl</h3>
+<pre class="code">&lt;dl&gt;
+  &lt;dt&gt;HTML&lt;/dt&gt;
+  &lt;dd&gt;超文本标记语言&lt;/dd&gt;
+  &lt;dt&gt;CSS&lt;/dt&gt;
+  &lt;dd&gt;层叠样式表&lt;/dd&gt;
+&lt;/dl&gt;</pre>
+        <p><code>dt</code> = 术语/名称，<code>dd</code> = 解释说明。</p>
+
+        <h3>4.4 列表 + 导航（老师卷名牌大学链接）</h3>
+<pre class="code">&lt;ul&gt;
+  &lt;li&gt;&lt;a href="http://www.fudan.edu.cn"&gt;复旦大学&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href="http://www.whu.edu.cn/"&gt;武汉大学&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;</pre>
+        <div class="tip">超链接放在 <code>&lt;li&gt;</code> 内；配合 CSS <code>display:flex</code> 可实现横向一行排列。</div>
+
+        <h3>4.5 对比速记</h3>
+        <table class="data">
+          <tr><th>类型</th><th>标签</th><th>子元素</th><th>默认符号</th></tr>
+          <tr><td>无序</td><td><code>ul</code></td><td><code>li</code></td><td>圆点 ●</td></tr>
+          <tr><td>有序</td><td><code>ol</code></td><td><code>li</code></td><td>数字 1. 2. 3.</td></tr>
+          <tr><td>定义</td><td><code>dl</code></td><td><code>dt</code> + <code>dd</code></td><td>无</td></tr>
+        </table>
+      </article>
+
+      <!-- ========== Flex ========== -->
+      <article class="section" id="flex">
+        <div class="section-head">
+          <div class="section-num focus">5</div>
+          <div>
+            <h2>CSS 弹性布局 Flex ★</h2>
+            <p class="sub">一维布局核心，居中/导航/分栏必考</p>
+          </div>
+        </div>
+
+        <p class="section-lead">Flex 是现代 CSS 布局的基础，期末卷里选择题和填空题出现频率很高。记住三步：父元素设 <code>display:flex</code>，用 <code>justify-content</code> 管主轴对齐，用 <code>align-items</code> 管交叉轴对齐。导航栏水平排列、内容垂直居中都是典型考法。</p>
+
+        <h3>5.1 启用 Flex</h3>
+<pre class="code">.container {
+  display: flex;           /* 设为弹性容器 */
+}</pre>
+        <p>子元素自动成为 flex 项目（flex item），默认沿<strong>主轴</strong>排列。</p>
+
+        <h3>5.2 主轴与交叉轴</h3>
+        <table class="data">
+          <tr><th>概念</th><th>说明</th></tr>
+          <tr><td>主轴 main axis</td><td>项目排列方向，默认水平从左到右</td></tr>
+          <tr><td>交叉轴 cross axis</td><td>与主轴垂直的方向</td></tr>
+          <tr><td>flex 容器</td><td>设置了 <code>display:flex</code> 的父元素</td></tr>
+          <tr><td>flex 项目</td><td>容器的直接子元素</td></tr>
+        </table>
+
+        <h3>5.3 容器属性 ★★★</h3>
+        <table class="data">
+          <tr><th>属性</th><th>常用值</th><th>作用</th></tr>
+          <tr><td><code>flex-direction</code></td><td>row / column</td><td>主轴方向：水平 / 竖直</td></tr>
+          <tr><td><code>justify-content</code></td><td>flex-start / center / flex-end / space-between</td><td>主轴对齐</td></tr>
+          <tr><td><code>align-items</code></td><td>flex-start / center / flex-end / stretch</td><td>交叉轴对齐</td></tr>
+          <tr><td><code>flex-wrap</code></td><td>nowrap / wrap</td><td>是否换行</td></tr>
+          <tr><td><code>gap</code></td><td>如 8px、12px</td><td>项目间距</td></tr>
+        </table>
+
+        <div class="tip"><strong>justify-content:flex-start</strong> = 主轴起始端对齐（水平时即左对齐）。<strong>align-items:center</strong> = 交叉轴居中（常做垂直居中）。</div>
+
+        <h3>5.4 水平垂直居中模板 ★</h3>
+<pre class="code">.box {
+  display: flex;
+  justify-content: center;  /* 主轴居中 */
+  align-items: center;      /* 交叉轴居中 */
+  height: 200px;
+}</pre>
+
+        <h3>5.5 导航横向排列模板</h3>
+<pre class="code">ul {
+  list-style: none;
+  padding: 0;
+  display: flex;
+  gap: 8px;
+}
+a {
+  padding: 5px 10px;
+  text-decoration: none;
+}
+a:hover {
+  background: lawngreen;
+}</pre>
+
+        <h3>5.6 两栏布局（专业宣传页思路）</h3>
+<pre class="code">.main {
+  display: flex;
+  gap: 20px;
+}
+.main-left {
+  flex: 1;              /* 占据剩余空间 */
+}
+.notice {
+  width: 360px;         /* 固定宽度侧栏 */
+}</pre>
+      </article>
+
+      <!-- ========== CSS 基础 ========== -->
+      <article class="section" id="css-base">
+        <div class="section-head">
+          <div class="section-num">6</div>
+          <div>
+            <h2>CSS 基础</h2>
+            <p class="sub">引入方式、语法、单位</p>
+          </div>
+        </div>
+
+        <p class="section-lead">CSS 负责网页的外观与排版。先掌握三种引入方式（行内、内部、外部 link），再熟悉「选择器 + 声明块」的基本写法。单位上 <code>px</code> 最常用，百分比和 <code>em</code> 了解即可。</p>
+
+        <h3>6.1 三种引入方式</h3>
+        <table class="data">
+          <tr><th>方式</th><th>写法</th><th>优先级</th></tr>
+          <tr><td>内联</td><td><code>style="color:red"</code></td><td>最高</td></tr>
+          <tr><td>内部</td><td><code>&lt;style&gt;...&lt;/style&gt;</code></td><td>中</td></tr>
+          <tr><td>外部</td><td><code>&lt;link rel="stylesheet" href="..."&gt;</code></td><td>中</td></tr>
+        </table>
+
+        <h3>6.2 CSS 语法</h3>
+<pre class="code">选择器 {
+  属性名: 属性值;
+  属性名: 属性值;
+}</pre>
+
+        <h3>6.3 常用单位</h3>
+        <table class="data">
+          <tr><th>单位</th><th>说明</th><th>示例</th></tr>
+          <tr><td><code>px</code></td><td>像素，绝对单位</td><td><code>font-size: 16px</code></td></tr>
+          <tr><td><code>%</code></td><td>相对父元素</td><td><code>width: 50%</code></td></tr>
+          <tr><td><code>em</code></td><td>相对当前元素 font-size</td><td><code>padding: 1em</code></td></tr>
+          <tr><td><code>rem</code></td><td>相对根元素 html 的 font-size</td><td><code>line-height: 2rem</code></td></tr>
+        </table>
+        <div class="warn">并非所有属性值都需要单位，如 <code>opacity:0.5</code>、<code>line-height:1.5</code> 可以无单位。</div>
+      </article>
+
+      <!-- ========== 选择器 ========== -->
+      <article class="section" id="css-select">
+        <div class="section-head">
+          <div class="section-num">7</div>
+          <div>
+            <h2>CSS 选择器与优先级</h2>
+            <p class="sub">元素/类/ID/分组/后代 — 必考易混</p>
+          </div>
+        </div>
+
+        <table class="data">
+          <tr><th>选择器</th><th>写法</th><th>含义</th><th>示例</th></tr>
+          <tr><td>元素</td><td><code>p</code></td><td>所有 p 元素</td><td><code>p { color: red; }</code></td></tr>
+          <tr><td>类</td><td><code>.类名</code></td><td>class 匹配</td><td><code>.p1 { }</code></td></tr>
+          <tr><td>ID</td><td><code>#id名</code></td><td>id 匹配（唯一）</td><td><code>#main { }</code></td></tr>
+          <tr><td>并集</td><td><code>p.p1</code></td><td>同时满足（无空格）</td><td>既是 p 又有 class p1</td></tr>
+          <tr><td>分组</td><td><code>h1, p</code></td><td>逗号 OR</td><td>h1 和 p 都生效</td></tr>
+          <tr><td>后代</td><td><code>p .p1</code></td><td>有空格，p 内部的 .p1</td><td>★ 易错</td></tr>
+        </table>
+
+        <div class="warn"><strong>经典易错题：</strong><code>&lt;p class="p1"&gt;</code> 用 <code>p.p1</code> 能选中，用 <code>p .p1</code>（有空格）<strong>不能</strong>选中。</div>
+
+        <h3>优先级（从高到低）</h3>
+        <ol>
+          <li>内联样式 <code>style=""</code></li>
+          <li>ID 选择器 <code>#id</code></li>
+          <li>类 / 属性 / 伪类 <code>.class</code></li>
+          <li>元素 / 伪元素 <code>p</code></li>
+        </ol>
+      </article>
+
+      <!-- ========== 盒模型 ========== -->
+      <article class="section" id="css-box">
+        <div class="section-head">
+          <div class="section-num">8</div>
+          <div>
+            <h2>CSS 盒模型</h2>
+            <p class="sub">content → padding → border → margin</p>
+          </div>
+        </div>
+
+        <div class="ok-box">盒模型四层：<strong>内容 content</strong> → <strong>内边距 padding</strong> → <strong>边框 border</strong> → <strong>外边距 margin</strong>。<code>font</code> 不属于盒模型。</div>
+
+        <table class="data">
+          <tr><th>属性</th><th>方向写法</th><th>记忆</th></tr>
+          <tr><td><code>padding</code></td><td>padding-top/right/bottom/left</td><td>内边距，内容与边框之间</td></tr>
+          <tr><td><code>margin</code></td><td>margin-left 等</td><td>外边距，元素与元素之间</td></tr>
+          <tr><td><code>border</code></td><td>border: 1px solid #ccc</td><td>边框</td></tr>
+          <tr><td><code>width / height</code></td><td>默认指 content 宽高</td><td>配合 box-sizing 理解</td></tr>
+        </table>
+
+        <h3>box-sizing</h3>
+<pre class="code">* { box-sizing: border-box; }  /* width 含 padding 和 border */</pre>
+      </article>
+
+      <!-- ========== 文字背景 ========== -->
+      <article class="section" id="css-text">
+        <div class="section-head">
+          <div class="section-num">9</div>
+          <div>
+            <h2>文字、颜色与背景</h2>
+            <p class="sub">常考属性速查</p>
+          </div>
+        </div>
+
+        <table class="data">
+          <tr><th>属性</th><th>作用</th><th>示例</th></tr>
+          <tr><td><code>color</code></td><td>文字颜色（不是背景色）</td><td><code>#007b3b</code>、<code>skyblue</code></td></tr>
+          <tr><td><code>font-size</code></td><td>字号</td><td><code>20px</code></td></tr>
+          <tr><td><code>font-style</code></td><td>italic 斜体</td><td>作者名斜体</td></tr>
+          <tr><td><code>text-align</code></td><td>水平对齐</td><td><code>center</code></td></tr>
+          <tr><td><code>text-decoration</code></td><td>underline 下划线</td><td></td></tr>
+          <tr><td><code>line-height</code></td><td>行高</td><td><code>2rem</code></td></tr>
+          <tr><td><code>background-color</code></td><td>背景色</td><td><code>skyblue</code></td></tr>
+          <tr><td><code>background-image</code></td><td>背景图</td><td><code>url("bg.jpg")</code></td></tr>
+          <tr><td><code>background-position</code></td><td>背景图起始位置</td><td>★ 常考</td></tr>
+          <tr><td><code>border-radius</code></td><td>圆角</td><td><code>50%</code> 变圆</td></tr>
+          <tr><td><code>opacity</code></td><td>透明度 0~1</td><td>1 完全不透明</td></tr>
+        </table>
+
+        <h3>颜色写法</h3>
+        <ul>
+          <li>十六进制：<code>#FFBB00</code>（# + 6 位十六进制）</li>
+          <li>关键字：<code>red</code>、<code>skyblue</code>、<code>lawngreen</code></li>
+          <li>rgb：<code>rgb(255, 0, 0)</code></li>
+        </ul>
+
+        <h3>伪类与伪元素（了解）</h3>
+        <table class="data">
+          <tr><th>写法</th><th>含义</th></tr>
+          <tr><td><code>a:hover</code></td><td>鼠标悬停</td></tr>
+          <tr><td><code>input:focus</code></td><td>获得焦点</td></tr>
+          <tr><td><code>::after</code></td><td>元素内容之后插入（需 content）</td></tr>
+        </table>
+      </article>
+
+      <!-- ========== 动画 ========== -->
+      <article class="section" id="css-anim">
+        <div class="section-head">
+          <div class="section-num">10</div>
+          <div>
+            <h2>CSS 动画与过渡</h2>
+            <p class="sub">老师填空卷：@keyframes、animation、暂停</p>
+          </div>
+        </div>
+
+        <h3>10.1 transition 过渡</h3>
+        <p>适合简单属性变化。<code>display</code> 等离散属性<strong>不能</strong>过渡。</p>
+<pre class="code">.box {
+  transition: background-color 0.3s ease;
+}</pre>
+
+        <h3>10.2 @keyframes + animation ★</h3>
+<pre class="code">@keyframes anim {
+  0%   { transform: rotate(0deg); }
+  50%  { transform: rotate(180deg); }
+  100% { transform: rotate(360deg); }
+}
+div {
+  border-radius: 50%;
+  animation: anim 3s linear infinite;
+}
+div:hover {
+  animation-play-state: paused;  /* 悬停暂停 */
+}</pre>
+
+        <table class="data">
+          <tr><th>属性</th><th>含义</th></tr>
+          <tr><td><code>animation-name</code></td><td>动画名称</td></tr>
+          <tr><td><code>animation-duration</code></td><td>持续时间，如 3s</td></tr>
+          <tr><td><code>animation-iteration-count</code></td><td>播放次数，infinite 无限</td></tr>
+          <tr><td><code>animation-play-state</code></td><td>paused 暂停 / running 播放</td></tr>
+        </table>
+      </article>
+
+      <!-- ========== JS ========== -->
+      <article class="section" id="js-base">
+        <div class="section-head">
+          <div class="section-num">11</div>
+          <div>
+            <h2>JavaScript 基础补充</h2>
+            <p class="sub">只掌握期末常考内容，不做深入</p>
+          </div>
+        </div>
+
+        <p class="section-lead">JavaScript 在期末卷中占比不大，主要考基础语法和 DOM 常用方法。重点记 <code>getElementById</code>、事件属性（<code>onclick</code>、<code>onsubmit</code>、<code>onkeydown</code>）以及简单函数写法即可，不必深入 ES6 或框架。</p>
+
+        <h3>11.1 变量与输出</h3>
+<pre class="code">var name = "张三";
+console.log("姓名：" + name);   // 控制台输出
+alert("总价：" + total);        // 弹框</pre>
+
+        <h3>11.2 函数</h3>
+<pre class="code">function compute() {
+  var a = 5, b = 6;
+  return a * b;
+}
+// 形参个数不限（考试选「任意」）</pre>
+
+        <h3>11.3 DOM 获取元素 ★</h3>
+        <table class="data">
+          <tr><th>方法</th><th>返回值</th></tr>
+          <tr><td><code>document.getElementById("id")</code></td><td>单个元素对象</td></tr>
+          <tr><td><code>document.getElementsByTagName("p")</code></td><td>元素集合</td></tr>
+          <tr><td><code>document.getElementsByName("name")</code></td><td>元素集合</td></tr>
+          <tr><td><code>document.createElement("div")</code></td><td>创建元素节点</td></tr>
+        </table>
+
+        <h3>11.4 事件 ★</h3>
+        <table class="data">
+          <tr><th>事件</th><th>触发时机</th><th>绑定对象</th></tr>
+          <tr><td><code>onclick</code></td><td>单击</td><td>任意元素</td></tr>
+          <tr><td><code>onkeydown</code></td><td>按下键盘任意键</td><td>元素</td></tr>
+          <tr><td><code>onsubmit</code></td><td>表单提交</td><td><strong>Form</strong></td></tr>
+          <tr><td><code>onfocus / onblur</code></td><td>获得/失去焦点</td><td>表单元素</td></tr>
+        </table>
+
+        <h3>11.5 老师卷 JS 填空模板（价格计算）</h3>
+<pre class="code">var btn = document.getElementById('calc');
+btn.onclick = compute;
+function compute() {
+  var price = document.getElementById('price');
+  var number = document.getElementById('number');
+  var total = parseInt(price.value) * parseInt(number.value);
+  alert(total);
+}</pre>
+        <ul>
+          <li>按钮需设置 <code>id="calc"</code> 与 getElementById 对应</li>
+          <li><code>.value</code> 获取输入框的值</li>
+          <li><code>parseInt()</code> 转整数</li>
+        </ul>
+
+        <h3>11.6 运算符速记</h3>
+        <table class="data">
+          <tr><th>运算符</th><th>说明</th></tr>
+          <tr><td><code>===</code></td><td>值和类型都相等（严格相等）</td></tr>
+          <tr><td><code>==</code></td><td>只比较值，可能类型转换</td></tr>
+          <tr><td><code>+</code></td><td>数字相加 / 字符串拼接</td></tr>
+          <tr><td><code>typeof</code></td><td>返回类型字符串，如 "string"</td></tr>
+        </table>
+      </article>
+
+      <!-- ========== 考前速记 ========== -->
+      <article class="section" id="exam">
+        <div class="section-head">
+          <div class="section-num">12</div>
+          <div>
+            <h2>考前速记清单</h2>
+            <p class="sub">进考场前 10 分钟过一遍</p>
+          </div>
+        </div>
+
+        <p class="section-lead">这是进考场前的最后一遍扫盲：把容易混淆的概念再过一遍，尤其是表格合并、表单属性、Flex 对齐和 JS 对象方法。不必逐字背诵，但要能一眼认出正确选项。</p>
+
+        <h3>HTML 必背</h3>
+        <ul>
+          <li>HTML 由 <strong>浏览器</strong> 解析执行</li>
+          <li>注释：<code>&lt;!-- --&gt;</code>；DOCTYPE：<code>&lt;!DOCTYPE html&gt;</code></li>
+          <li>外部 CSS：<code>&lt;link rel="stylesheet" href="..."&gt;</code></li>
+          <li>表格：rowspan 跨行，colspan 跨列；caption 标题</li>
+          <li>表单：required 必填；placeholder 提示；label for = input id</li>
+          <li>列表：ul 无序，ol 有序，dl 定义列表</li>
+          <li>br 不是块级元素；img 不是表单元素</li>
+        </ul>
+
+        <h3>CSS 必背</h3>
+        <ul>
+          <li>margin 外边距，padding 内边距</li>
+          <li>margin-left 不是 padding-left 的「左外边距」混淆题</li>
+          <li>flex：display:flex + justify-content + align-items</li>
+          <li>flex-start = 主轴起始端（左对齐）</li>
+          <li>position 默认 static</li>
+          <li>animation-iteration-count:3 播放 3 次</li>
+          <li>color 是文字色，不是背景色</li>
+        </ul>
+
+        <h3>JS 必背</h3>
+        <ul>
+          <li>getElementById → 单个对象</li>
+          <li>onsubmit → Form 对象</li>
+          <li>onkeydown → 按键盘</li>
+          <li>createElement → 创建元素</li>
+        </ul>
+      </article>
+
+    </div>
+  </div>
+</div>
+
+<script>
+// 目录高亮
+const links = document.querySelectorAll('.toc-list a');
+const sections = [...links].map(a => document.querySelector(a.getAttribute('href'))).filter(Boolean);
+function onScroll(){
+  const offset = 120;
+  let cur = sections[0];
+  sections.forEach(sec => {
+    if(window.scrollY >= sec.offsetTop - offset) cur = sec;
+  });
+  links.forEach(a => a.classList.toggle('active', a.getAttribute('href') === '#' + cur.id));
+}
+window.addEventListener('scroll', onScroll, {passive:true});
+onScroll();
+</script>
+</body>
+</html>
