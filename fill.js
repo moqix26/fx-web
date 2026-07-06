@@ -258,9 +258,7 @@ const FILL_BANK = [
     ]
   },
   {
-    title: "姓名问候弹窗",
-    desc: "设计一个页面，在文本框输入姓名后，单击【确定】按钮，弹框显示问候语，按下图所示效果，完成代码填空。",
-    img: "assets/03.jpeg",
+    img: "assets/08.jpeg",
     code: `<html lang="en">
 <head>
   <meta charset="UTF-8" />
