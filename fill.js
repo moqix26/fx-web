@@ -104,7 +104,7 @@ const FILL_BANK = [
   <script type="text/javascript">
     var btn = document.getElementById('calc')
     btn.onclick = ______ //绑定按钮单击事件处理函数 
-      function compute() {
+    function compute() {
       var price = document.getElementById('price')
       var number = document.getElementById('number')
       var total = 0
