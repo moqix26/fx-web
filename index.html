@@ -820,7 +820,7 @@
       </div>
       <div class="watermark"><span class="wm-line"></span><span class="wm-text">Made by MoQix26</span><span class="wm-line"></span></div>
       <div class="topbar-actions">
-        <a class="btn-ghost-light" href="next.html">复习大纲</a>
+        <a class="btn-ghost-light" href="next.html" id="btnOutline">复习大纲</a>
         <div class="timer" id="timer">⏱ <span id="timerText">00:00</span></div>
         <button class="btn-ghost-light" id="btnHome">返回首页</button>
       </div>
@@ -965,6 +965,11 @@ function bindTypeSlider(el){
   el.addEventListener('pointerup', () => sync(true));
 }
 
+function syncOutlineBtn(show){
+  const el = document.getElementById('btnOutline');
+  if(el) el.classList.toggle('hidden', !show);
+}
+
 /* ===================== 首页 ===================== */
 function renderHome(){
   pageMode = 'home';
@@ -972,6 +977,7 @@ function renderHome(){
   document.getElementById('bottomBar').classList.add('hidden');
   document.getElementById('timer').classList.remove('show');
   document.getElementById('btnHome').classList.add('hidden');
+  syncOutlineBtn(true);
   document.getElementById('btnSubmit').classList.remove('hidden');
   document.getElementById('btnSubmit').textContent = '交卷评分';
 
@@ -1070,6 +1076,7 @@ function renderCodeReviewList(){
   document.getElementById('bottomBar').classList.add('hidden');
   document.getElementById('timer').classList.remove('show');
   document.getElementById('btnHome').classList.remove('hidden');
+  syncOutlineBtn(true);
 
   const app = document.getElementById('app');
   app.innerHTML = `
@@ -1162,6 +1169,7 @@ function startExam(typeKey){
 
   document.getElementById('bottomBar').classList.remove('hidden');
   document.getElementById('btnHome').classList.remove('hidden');
+  syncOutlineBtn(false);
   document.getElementById('btnSubmit').classList.remove('hidden');
   document.getElementById('btnSubmit').textContent = '交卷评分';
   document.getElementById('timer').classList.add('show');
