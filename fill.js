@@ -270,7 +270,8 @@ const FILL_BANK = [
   <button ______>确定</button>
   <script type="text/javascript">
     var btn = document.getElementById('greetBtn')
-    btn.onclick = ______ //绑定按钮单击事件处理函数 function showGreet() {
+    btn.onclick = ______ //绑定按钮单击事件处理函数 
+    function showGreet() {
       var name = document.getElementById('uname').value
       ______ //弹框显示问候语
     }
