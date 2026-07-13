@@ -43,31 +43,33 @@ python -m http.server 8080
 # 或 Node.js（需安装 npx）
 npx serve .
 浏览器访问 http://localhost:8080 即可。
+```
+## 部署说明
 
-部署说明
-仓库已配置 GitHub Actions（.github/workflows/static.yml），推送到 main 分支后会自动部署到 GitHub Pages。
+仓库已配置 GitHub Actions（`.github/workflows/static.yml`），推送到 `main` 分支后会自动部署到 GitHub Pages。
 
-使用建议
-先阅读 复习大纲，通读表格、表单、列表、Flex 等重点章节
-在首页按题型调整题量，进行专项练习
-交卷后对照解析与评分要点，重点记忆标有「记忆」提示的内容
-编程题为主观题，请对照参考答案与评分要点自评
-技术栈
-HTML5 / CSS3 / 原生 JavaScript
-无框架、无构建步骤、零依赖
-作者
-MoQix26
+## 使用建议
 
-GitHub：@moqix26
-声明
+1. **先读大纲**：阅读 [复习大纲](next.html)，通读表格、表单、列表、Flex 等重点章节。
+2. **专项练习**：在首页按题型调整题量，进行针对性刷题。
+3. **对照解析**：交卷后查看解析与评分要点，重点记忆标有「记忆」提示的内容。
+4. **编程题自评**：编程题为主观题，请对照参考答案与评分要点自行评分。
+
+## 技术栈
+
+- HTML5 / CSS3 / 原生 JavaScript
+- 无框架、无构建步骤、零依赖
+
+## 作者
+
+**MoQix26**
+
+- GitHub：[@moqix26](https://github.com/moqix26)
+
+## 声明
+
 本项目仅供课程复习与交流学习使用，题库内容来源于课堂资料与老师模拟卷，请勿用于商业用途。
 
-如有问题或建议，欢迎提交 Issue。
-
-
 ---
-你可以把以上内容保存为仓库根目录的 `README.md`，然后提交推送：
-```bash
-git add README.md
-git commit -m "docs: 添加项目 README"
-git push
+
+如有问题或建议，欢迎提交 [Issue](https://github.com/moqix26/fx-web/issues)。
